@@ -86,13 +86,14 @@ export default function AgitMain() {
   const curTheme = THEMES[themeKey] || THEMES.dugout;
 
   const calcDday = (targetDate: string) => {
+    if (!targetDate) return null;
     const diff = Math.ceil((new Date(targetDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
     if (diff === 0) return 'D-DAY';
-    return diff > 0 ?  : ;
+    return diff > 0 ? `D-${diff}` : `D+${Math.abs(diff)}`;
   };
 
   return (
-    <div className={}>
+    <div className={`min-h-screen ${curTheme.bg} text-slate-100 font-sans selection:bg-amber-500 selection:text-black transition-colors duration-300`}>
       <header className="border-b border-slate-800/80 sticky top-0 z-50 backdrop-blur-md bg-slate-950/60">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setTab('dash')}>
@@ -112,7 +113,7 @@ export default function AgitMain() {
               <button
                 key={k}
                 onClick={() => setTab(k)}
-                className={}
+                className={`px-3 py-1.5 rounded-lg transition-all ${tab === k ? curTheme.btn : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}`}
               >
                 {label}
               </button>
@@ -124,23 +125,23 @@ export default function AgitMain() {
       <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         {tab === 'dash' && (
           <div className="space-y-6">
-            <div className={}>
+            <div className={`p-8 rounded-2xl border ${curTheme.card} backdrop-blur-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xl`}>
               <div>
-                <span className={}>
+                <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border ${curTheme.badge} mb-2`}>
                   PERSONAL DASHBOARD
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-black text-white">오늘도 나만의 페이스로 ⚡</h1>
                 <p className="text-xs text-slate-400 mt-1">{dateStr}</p>
               </div>
               <div className="text-right">
-                <div className={}>
+                <div className={`text-4xl font-mono font-black tracking-wider ${curTheme.accent}`}>
                   {timeStr || '00:00:00'}
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <div className={}>
+              <div className={`p-5 rounded-2xl border ${curTheme.card} space-y-3`}>
                 <div className="flex justify-between items-center">
                   <h3 className="font-bold text-sm text-slate-200">📖 최근 일기</h3>
                   <button onClick={() => setTab('diary')} className="text-xs text-slate-400 hover:text-white">더보기 →</button>
@@ -159,7 +160,7 @@ export default function AgitMain() {
                 )}
               </div>
 
-              <div className={}>
+              <div className={`p-5 rounded-2xl border ${curTheme.card} space-y-3`}>
                 <div className="flex justify-between items-center">
                   <h3 className="font-bold text-sm text-slate-200">📌 중요 메모</h3>
                   <button onClick={() => setTab('note')} className="text-xs text-slate-400 hover:text-white">더보기 →</button>
@@ -177,7 +178,7 @@ export default function AgitMain() {
                 )}
               </div>
 
-              <div className={}>
+              <div className={`p-5 rounded-2xl border ${curTheme.card} space-y-3`}>
                 <div className="flex justify-between items-center">
                   <h3 className="font-bold text-sm text-slate-200">🎯 To-Do & D-Day</h3>
                   <button onClick={() => setTab('todo')} className="text-xs text-slate-400 hover:text-white">더보기 →</button>
@@ -186,7 +187,7 @@ export default function AgitMain() {
                   {todos.slice(0, 3).map(t => (
                     <div key={t.id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-xs">
                       <span className={t.isDone ? 'line-through text-slate-500' : 'text-slate-200'}>{t.content}</span>
-                      {t.dDay && <span className={}>{calcDday(t.dDay)}</span>}
+                      {t.dDay && <span className={`font-mono font-bold ${curTheme.accent}`}>{calcDday(t.dDay)}</span>}
                     </div>
                   ))}
                 </div>
@@ -196,11 +197,12 @@ export default function AgitMain() {
         )}
 
         {tab === 'diary' && (
-          <div className={}>
+          <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
             <div className="flex justify-between items-center border-b border-slate-800 pb-4">
               <h2 className="text-lg font-bold text-white flex items-center gap-2">
                 📖 비밀 일기장 {isLocked ? '🔒' : '🔓'}
               </h2>
+              {!isLocked && (
                 <button onClick={() => setIsLocked(true)} className="text-xs px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">
                   잠그기
                 </button>
@@ -245,10 +247,11 @@ export default function AgitMain() {
                     />
                     <button
                       onClick={() => {
+                        if (!newDiary.title) return;
                         setDiaries([{ id: Date.now(), date: new Date().toISOString().split('T')[0], ...newDiary }, ...diaries]);
                         setNewDiary({ title: '', content: '', emoji: '😊', weather: '☀️ 맑음' });
                       }}
-                      className={}
+                      className={`px-3 py-1.5 rounded-lg ${curTheme.btn} text-xs`}
                     >
                       일기 저장
                     </button>
@@ -279,7 +282,7 @@ export default function AgitMain() {
         )}
 
         {tab === 'note' && (
-          <div className={}>
+          <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
             <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">📝 스마트 메모장</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <input
@@ -298,10 +301,11 @@ export default function AgitMain() {
               />
               <button
                 onClick={() => {
+                  if (!newNote.title) return;
                   setNotes([{ id: Date.now(), ...newNote, isPinned: false }, ...notes]);
                   setNewNote({ title: '', content: '', category: '일반' });
                 }}
-                className={}
+                className={`px-4 py-2 rounded-xl ${curTheme.btn} text-xs`}
               >
                 메모 추가
               </button>
@@ -320,6 +324,7 @@ export default function AgitMain() {
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">{n.category}</span>
                     <div className="flex gap-2 text-xs">
                       <button
+                        onClick={() => setNotes(notes.map(x => x.id === n.id ? { ...x, isPinned: !x.isPinned } : x))}
                         className={n.isPinned ? 'text-amber-400 font-bold' : 'text-slate-500 hover:text-white'}
                       >
                         {n.isPinned ? '📌 고정됨' : '📌 고정'}
@@ -336,7 +341,7 @@ export default function AgitMain() {
         )}
 
         {tab === 'todo' && (
-          <div className={}>
+          <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
             <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">🎯 To-Do & D-Day 관리</h2>
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
               <input
@@ -354,10 +359,11 @@ export default function AgitMain() {
               />
               <button
                 onClick={() => {
+                  if (!newTodo.content) return;
                   setTodos([{ id: Date.now(), isDone: false, ...newTodo }, ...todos]);
                   setNewTodo({ content: '', priority: 'normal', dDay: '' });
                 }}
-                className={}
+                className={`px-4 py-2 rounded-xl ${curTheme.btn} text-xs`}
               >
                 항목 추가
               </button>
@@ -370,12 +376,13 @@ export default function AgitMain() {
                     <input
                       type="checkbox"
                       checked={t.isDone}
+                      onChange={() => setTodos(todos.map(x => x.id === t.id ? { ...x, isDone: !x.isDone } : x))}
                       className="w-4 h-4 rounded bg-slate-800 border-slate-700 accent-amber-500"
                     />
                     <span className={t.isDone ? 'line-through text-slate-500' : 'text-slate-200'}>{t.content}</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    {t.dDay && <span className={}>{calcDday(t.dDay)}</span>}
+                    {t.dDay && <span className={`font-mono font-bold ${curTheme.accent}`}>{calcDday(t.dDay)}</span>}
                     <button onClick={() => setTodos(todos.filter(x => x.id !== t.id))} className="text-slate-500 hover:text-red-400">삭제</button>
                   </div>
                 </div>
@@ -385,7 +392,7 @@ export default function AgitMain() {
         )}
 
         {tab === 'archive' && (
-          <div className={}>
+          <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
             <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">🚀 개인 북마크 & 아카이브</h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <input
@@ -404,10 +411,11 @@ export default function AgitMain() {
               />
               <button
                 onClick={() => {
+                  if (!newBmk.title || !newBmk.url) return;
                   setBookmarks([{ id: Date.now(), ...newBmk }, ...bookmarks]);
                   setNewBmk({ title: '', url: '', icon: '🔗' });
                 }}
-                className={}
+                className={`px-4 py-2 rounded-xl ${curTheme.btn} text-xs`}
               >
                 북마크 등록
               </button>
@@ -434,7 +442,7 @@ export default function AgitMain() {
         )}
 
         {tab === 'setting' && (
-          <div className={}>
+          <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
             <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">⚙️ 테마 및 커스텀 설정</h2>
             
             <div className="space-y-4">
@@ -444,7 +452,7 @@ export default function AgitMain() {
                   <button
                     key={k}
                     onClick={() => setThemeKey(k)}
-                    className={}
+                    className={`p-3 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 ${themeKey === k ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:text-white'}`}
                   >
                     <span>{t.name}</span>
                   </button>
