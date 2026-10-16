@@ -2,52 +2,59 @@
 
 import React, { useState, useEffect } from 'react';
 
-const THEMES: Record<string, { name: string; bg: string; card: string; accent: string; btn: string; badge: string }> = {
+const THEMES: Record<string, { name: string; bg: string; card: string; accent: string; btn: string; badge: string; glow: string; bgImage?: string }> = {
   dugout: {
     name: '⚾ 더그아웃 오렌지',
     bg: 'bg-slate-950',
-    card: 'bg-slate-900/70 border-slate-800',
+    glow: 'from-amber-500/20 via-slate-950 to-slate-950',
+    card: 'bg-slate-900/80 border-slate-800/80 shadow-amber-900/10 shadow-lg backdrop-blur-xl',
     accent: 'text-amber-500',
-    btn: 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold',
+    btn: 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold shadow-lg shadow-amber-500/20',
     badge: 'bg-amber-500/10 text-amber-400 border-amber-500/20'
   },
   stealth: {
     name: '✈️ 스텔스 챠콜',
     bg: 'bg-zinc-950',
-    card: 'bg-zinc-900/70 border-zinc-800',
+    glow: 'from-cyan-500/20 via-zinc-950 to-zinc-950',
+    card: 'bg-zinc-900/80 border-zinc-800/80 shadow-cyan-900/10 shadow-lg backdrop-blur-xl',
     accent: 'text-cyan-400',
-    btn: 'bg-cyan-500 hover:bg-cyan-600 text-zinc-950 font-bold',
+    btn: 'bg-cyan-500 hover:bg-cyan-600 text-zinc-950 font-bold shadow-lg shadow-cyan-500/20',
     badge: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
   },
   stream: {
     name: '🐟 공지천 티어',
     bg: 'bg-stone-950',
-    card: 'bg-stone-900/70 border-stone-800',
+    glow: 'from-emerald-500/30 via-stone-950 to-stone-950',
+    // 고화질 풍경/하천 이미지 배경
+    bgImage: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2000&auto=format&fit=crop',
+    card: 'bg-stone-900/85 border-stone-800/80 shadow-emerald-900/20 shadow-xl backdrop-blur-xl',
     accent: 'text-emerald-400',
-    btn: 'bg-emerald-500 hover:bg-emerald-600 text-stone-950 font-bold',
+    btn: 'bg-emerald-500 hover:bg-emerald-600 text-stone-950 font-bold shadow-lg shadow-emerald-500/20',
     badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
   },
   amber: {
     name: '☕ 앰버 서재',
     bg: 'bg-neutral-950',
-    card: 'bg-neutral-900/70 border-neutral-800',
+    glow: 'from-orange-500/20 via-neutral-950 to-neutral-950',
+    card: 'bg-neutral-900/80 border-neutral-800/80 shadow-orange-900/10 shadow-lg backdrop-blur-xl',
     accent: 'text-orange-400',
-    btn: 'bg-orange-500 hover:bg-orange-600 text-neutral-950 font-bold',
+    btn: 'bg-orange-500 hover:bg-orange-600 text-neutral-950 font-bold shadow-lg shadow-orange-500/20',
     badge: 'bg-orange-500/10 text-orange-400 border-orange-500/20'
   },
   minimal: {
     name: '🖤 딥 미니멀',
     bg: 'bg-black',
-    card: 'bg-zinc-900/50 border-zinc-800',
+    glow: 'from-zinc-700/20 via-black to-black',
+    card: 'bg-zinc-900/60 border-zinc-800/80 backdrop-blur-xl',
     accent: 'text-zinc-200',
-    btn: 'bg-zinc-200 hover:bg-white text-zinc-950 font-bold',
+    btn: 'bg-zinc-200 hover:bg-white text-zinc-950 font-bold shadow-lg shadow-white/10',
     badge: 'bg-zinc-800 text-zinc-300 border-zinc-700'
   }
 };
 
 export default function AgitMain() {
   const [tab, setTab] = useState('dash');
-  const [themeKey, setThemeKey] = useState('dugout');
+  const [themeKey, setThemeKey] = useState('stream');
   const [timeStr, setTimeStr] = useState('');
   const [dateStr, setDateStr] = useState('');
   
@@ -83,7 +90,7 @@ export default function AgitMain() {
     return () => clearInterval(timer);
   }, []);
 
-  const curTheme = THEMES[themeKey] || THEMES.dugout;
+  const curTheme = THEMES[themeKey] || THEMES.stream;
 
   const calcDday = (targetDate: string) => {
     if (!targetDate) return null;
@@ -93,8 +100,23 @@ export default function AgitMain() {
   };
 
   return (
-    <div className={`min-h-screen ${curTheme.bg} text-slate-100 font-sans selection:bg-amber-500 selection:text-black transition-colors duration-300`}>
-      <header className="border-b border-slate-800/80 sticky top-0 z-50 backdrop-blur-md bg-slate-950/60">
+    <div className={`min-h-screen ${curTheme.bg} text-slate-100 font-sans selection:bg-amber-500 selection:text-black transition-colors duration-500 relative overflow-hidden`}>
+      {/* 배경 사진 지정 시 어둡고 은은한 배경 이미지 적용 */}
+      {curTheme.bgImage && (
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 pointer-events-none transition-all duration-700 filter brightness-90 contrast-110"
+          style={{ backgroundImage: `url('${curTheme.bgImage}')` }}
+        />
+      )}
+
+      {/* 배경 은은한 앰비언트 조명 효과 */}
+      <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-gradient-to-b ${curTheme.glow} blur-[120px] pointer-events-none opacity-60 transition-all duration-700`} />
+      
+      {/* 격자 그리드 연출 */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+
+      {/* GNB 메인 네비게이션 */}
+      <header className="border-b border-slate-800/80 sticky top-0 z-50 backdrop-blur-md bg-slate-950/70">
         <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setTab('dash')}>
             <span className="text-2xl">⚡</span>
@@ -122,10 +144,13 @@ export default function AgitMain() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+      {/* 메인 컨텐츠 영역 */}
+      <main className="max-w-5xl mx-auto px-4 py-8 space-y-6 relative z-10">
+        
+        {/* 1. 대시보드 (Dashboard) */}
         {tab === 'dash' && (
           <div className="space-y-6">
-            <div className={`p-8 rounded-2xl border ${curTheme.card} backdrop-blur-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xl`}>
+            <div className={`p-8 rounded-2xl border ${curTheme.card} flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-2xl`}>
               <div>
                 <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border ${curTheme.badge} mb-2`}>
                   PERSONAL DASHBOARD
@@ -147,7 +172,7 @@ export default function AgitMain() {
                   <button onClick={() => setTab('diary')} className="text-xs text-slate-400 hover:text-white">더보기 →</button>
                 </div>
                 {diaries.length > 0 ? (
-                  <div className="p-3 rounded-xl bg-slate-900/50 border border-slate-800 space-y-1">
+                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
                     <div className="flex justify-between text-xs text-slate-400">
                       <span>{diaries[0].date}</span>
                       <span>{diaries[0].emoji} {diaries[0].weather}</span>
@@ -167,7 +192,7 @@ export default function AgitMain() {
                 </div>
                 {notes.filter(n => n.isPinned).length > 0 ? (
                   notes.filter(n => n.isPinned).slice(0, 2).map(n => (
-                    <div key={n.id} className="p-3 rounded-xl bg-slate-900/50 border border-slate-800 space-y-1">
+                    <div key={n.id} className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">{n.category}</span>
                       <div className="font-semibold text-sm text-white truncate">{n.title}</div>
                       <div className="text-xs text-slate-400 truncate">{n.content}</div>
@@ -185,7 +210,7 @@ export default function AgitMain() {
                 </div>
                 <div className="space-y-2">
                   {todos.slice(0, 3).map(t => (
-                    <div key={t.id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 text-xs">
+                    <div key={t.id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs">
                       <span className={t.isDone ? 'line-through text-slate-500' : 'text-slate-200'}>{t.content}</span>
                       {t.dDay && <span className={`font-mono font-bold ${curTheme.accent}`}>{calcDday(t.dDay)}</span>}
                     </div>
@@ -196,6 +221,7 @@ export default function AgitMain() {
           </div>
         )}
 
+        {/* 2. 비밀 일기장 (Private Diary) */}
         {tab === 'diary' && (
           <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
             <div className="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -229,7 +255,7 @@ export default function AgitMain() {
               </div>
             ) : (
               <div className="space-y-6">
-                <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800 space-y-3">
+                <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3">
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <input
                       type="text"
@@ -266,7 +292,7 @@ export default function AgitMain() {
 
                 <div className="space-y-3">
                   {diaries.map(d => (
-                    <div key={d.id} className="p-4 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-2">
+                    <div key={d.id} className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2">
                       <div className="flex justify-between items-center text-xs text-slate-400">
                         <span>{d.date} • {d.emoji} {d.weather}</span>
                         <button onClick={() => setDiaries(diaries.filter(x => x.id !== d.id))} className="hover:text-red-400">삭제</button>
@@ -281,6 +307,7 @@ export default function AgitMain() {
           </div>
         )}
 
+        {/* 3. 스마트 메모장 (Notes) */}
         {tab === 'note' && (
           <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
             <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">📝 스마트 메모장</h2>
@@ -319,7 +346,7 @@ export default function AgitMain() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {notes.map(n => (
-                <div key={n.id} className="p-4 rounded-xl bg-slate-900/40 border border-slate-800 space-y-2 relative group">
+                <div key={n.id} className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2 relative group">
                   <div className="flex justify-between items-center">
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">{n.category}</span>
                     <div className="flex gap-2 text-xs">
@@ -340,6 +367,7 @@ export default function AgitMain() {
           </div>
         )}
 
+        {/* 4. To-Do & D-Day */}
         {tab === 'todo' && (
           <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
             <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">🎯 To-Do & D-Day 관리</h2>
@@ -371,7 +399,7 @@ export default function AgitMain() {
 
             <div className="space-y-2">
               {todos.map(t => (
-                <div key={t.id} className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/40 border border-slate-800 text-xs">
+                <div key={t.id} className="flex items-center justify-between p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs">
                   <div className="flex items-center gap-3">
                     <input
                       type="checkbox"
@@ -391,6 +419,7 @@ export default function AgitMain() {
           </div>
         )}
 
+        {/* 5. 아카이브 (Archive) */}
         {tab === 'archive' && (
           <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
             <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">🚀 개인 북마크 & 아카이브</h2>
@@ -428,7 +457,7 @@ export default function AgitMain() {
                   href={b.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-slate-600 transition flex items-center justify-between group"
+                  className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-slate-600 transition flex items-center justify-between group"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-xl">{b.icon}</span>
@@ -441,6 +470,7 @@ export default function AgitMain() {
           </div>
         )}
 
+        {/* 6. 설정 (Settings) */}
         {tab === 'setting' && (
           <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
             <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">⚙️ 테마 및 커스텀 설정</h2>
