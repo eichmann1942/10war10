@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 
-// 6가지 프리미엄 특화 테마 (소련 T-80U / 미국 F-35 / 독일 레오파르트 2 반영)
 const THEMES: Record<string, { 
   name: string; 
   bg: string; 
@@ -54,24 +53,24 @@ const THEMES: Record<string, {
     badge: 'bg-red-500/10 text-red-400 border-red-500/30'
   },
   us_armory: {
-    name: '🦅 미국 - F-35 무기고',
+    name: '🦅 미국 - M1 에이브람스 무기고',
     bg: 'bg-slate-950',
-    glow: 'from-cyan-500/35 via-slate-950 to-slate-950',
-    bgImage: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=2000&auto=format&fit=crop',
-    card: 'bg-slate-900/85 border-cyan-500/40 shadow-cyan-950/30 shadow-xl backdrop-blur-xl',
-    accent: 'text-cyan-400',
-    btn: 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold shadow-lg shadow-cyan-500/30',
-    badge: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30'
+    glow: 'from-amber-600/35 via-slate-950 to-slate-950',
+    bgImage: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?q=80&w=2000&auto=format&fit=crop',
+    card: 'bg-slate-900/85 border-amber-500/40 shadow-amber-950/30 shadow-xl backdrop-blur-xl',
+    accent: 'text-amber-400',
+    btn: 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold shadow-lg shadow-amber-500/30',
+    badge: 'bg-amber-500/10 text-amber-300 border-amber-500/30'
   },
   de_armory: {
     name: '🛡️ 독일 - 레오파르트 2 무기고',
     bg: 'bg-zinc-950',
-    glow: 'from-amber-500/30 via-zinc-950 to-zinc-950',
-    bgImage: 'https://images.unsplash.com/photo-1579912437766-788398e2ef84?q=80&w=2000&auto=format&fit=crop',
+    glow: 'from-yellow-500/30 via-zinc-950 to-zinc-950',
+    bgImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2000&auto=format&fit=crop',
     card: 'bg-zinc-900/85 border-amber-500/30 shadow-zinc-950/30 shadow-xl backdrop-blur-xl',
-    accent: 'text-amber-400',
-    btn: 'bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold shadow-lg shadow-amber-500/30',
-    badge: 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+    accent: 'text-yellow-400',
+    btn: 'bg-yellow-500 hover:bg-yellow-400 text-zinc-950 font-bold shadow-lg shadow-yellow-500/30',
+    badge: 'bg-yellow-500/10 text-yellow-300 border-yellow-500/30'
   }
 };
 
