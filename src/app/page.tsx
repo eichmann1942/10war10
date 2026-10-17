@@ -2,6 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 
+const DEFAULT_BOOKMARKS = [
+  { id: 1, title: 'GitHub 저장소', url: 'https://github.com', icon: '💻' },
+  { id: 2, title: 'Vercel 대시보드', url: 'https://vercel.com', icon: '🚀' }
+];
+
 const THEMES: Record<string, { 
   name: string; 
   bg: string; 
@@ -46,31 +51,31 @@ const THEMES: Record<string, {
     name: '🎖️ 소련 - T-80U 무기고',
     bg: 'bg-neutral-950',
     glow: 'from-red-600/35 via-neutral-950 to-neutral-950',
-    bgImage: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2000&auto=format&fit=crop',
+    bgImage: 'https://images.unsplash.com/photo-1579912437766-788398e2ef84?q=80&w=2000&auto=format&fit=crop',
     card: 'bg-neutral-900/85 border-red-600/40 shadow-red-950/30 shadow-xl backdrop-blur-xl',
     accent: 'text-red-500',
     btn: 'bg-red-600 hover:bg-red-500 text-white font-bold shadow-lg shadow-red-600/30',
     badge: 'bg-red-500/10 text-red-400 border-red-500/30'
   },
   us_armory: {
-    name: '🦅 미국 - M1 에이브람스 무기고',
+    name: '🦅 미국 - M1 에이브람스 & F-35 무기고',
     bg: 'bg-slate-950',
-    glow: 'from-amber-600/35 via-slate-950 to-slate-950',
-    bgImage: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?q=80&w=2000&auto=format&fit=crop',
-    card: 'bg-slate-900/85 border-amber-500/40 shadow-amber-950/30 shadow-xl backdrop-blur-xl',
-    accent: 'text-amber-400',
-    btn: 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold shadow-lg shadow-amber-500/30',
-    badge: 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+    glow: 'from-cyan-500/35 via-slate-950 to-slate-950',
+    bgImage: 'https://images.unsplash.com/photo-1519074069444-1ba4eae1672a?q=80&w=2000&auto=format&fit=crop',
+    card: 'bg-slate-900/85 border-cyan-500/40 shadow-cyan-950/30 shadow-xl backdrop-blur-xl',
+    accent: 'text-cyan-400',
+    btn: 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold shadow-lg shadow-cyan-500/30',
+    badge: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30'
   },
   de_armory: {
     name: '🛡️ 독일 - 레오파르트 2 무기고',
     bg: 'bg-zinc-950',
-    glow: 'from-yellow-500/30 via-zinc-950 to-zinc-950',
-    bgImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2000&auto=format&fit=crop',
+    glow: 'from-amber-500/30 via-zinc-950 to-zinc-950',
+    bgImage: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=2000&auto=format&fit=crop',
     card: 'bg-zinc-900/85 border-amber-500/30 shadow-zinc-950/30 shadow-xl backdrop-blur-xl',
     accent: 'text-yellow-400',
-    btn: 'bg-yellow-500 hover:bg-yellow-400 text-zinc-950 font-bold shadow-lg shadow-yellow-500/30',
-    badge: 'bg-yellow-500/10 text-yellow-300 border-yellow-500/30'
+    btn: 'bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold shadow-lg shadow-amber-500/30',
+    badge: 'bg-amber-500/10 text-amber-300 border-amber-500/30'
   }
 };
 
@@ -91,7 +96,7 @@ export default function AgitMain() {
   const [diaries, setDiaries] = useState<any[]>([]);
   const [notes, setNotes] = useState<any[]>([]);
   const [todos, setTodos] = useState<any[]>([]);
-  const [bookmarks, setBookmarks] = useState<any[]>([]);
+  const [bookmarks, setBookmarks] = useState<any[]>(DEFAULT_BOOKMARKS);
   const [fishLogs, setFishLogs] = useState<any[]>([]);
   const [fishCategoryFilter, setFishCategoryFilter] = useState('전체');
 
@@ -119,8 +124,13 @@ export default function AgitMain() {
     if (lNotes) setNotes(JSON.parse(lNotes));
     const lTodos = localStorage.getItem('agit_todos');
     if (lTodos) setTodos(JSON.parse(lTodos));
+    
     const lBmk = localStorage.getItem('agit_bookmarks');
-    if (lBmk) setBookmarks(JSON.parse(lBmk));
+    if (lBmk) {
+      const parsed = JSON.parse(lBmk);
+      setBookmarks(parsed.length > 0 ? parsed : DEFAULT_BOOKMARKS);
+    }
+
     const lFish = localStorage.getItem('agit_fish_logs');
     if (lFish) setFishLogs(JSON.parse(lFish));
 
