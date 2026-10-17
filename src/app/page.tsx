@@ -2,57 +2,81 @@
 
 import React, { useState, useEffect } from 'react';
 
-const THEMES: Record<string, { name: string; bg: string; card: string; accent: string; btn: string; badge: string; glow: string; bgImage?: string }> = {
+// 6가지 프리미엄 특화 테마
+const THEMES: Record<string, { 
+  name: string; 
+  bg: string; 
+  card: string; 
+  accent: string; 
+  btn: string; 
+  badge: string; 
+  glow: string; 
+  bgImage?: string 
+}> = {
   dugout: {
-    name: '⚾ 더그아웃 오렌지',
+    name: '⚾ 한화의 오렌지 더그아웃',
     bg: 'bg-slate-950',
-    glow: 'from-amber-500/20 via-slate-950 to-slate-950',
-    card: 'bg-slate-900/80 border-slate-800/80 shadow-amber-900/10 shadow-lg backdrop-blur-xl',
-    accent: 'text-amber-500',
-    btn: 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold shadow-lg shadow-amber-500/20',
-    badge: 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-  },
-  stealth: {
-    name: '✈️ 스텔스 챠콜',
-    bg: 'bg-zinc-950',
-    glow: 'from-cyan-500/20 via-zinc-950 to-zinc-950',
-    card: 'bg-zinc-900/80 border-zinc-800/80 shadow-cyan-900/10 shadow-lg backdrop-blur-xl',
-    accent: 'text-cyan-400',
-    btn: 'bg-cyan-500 hover:bg-cyan-600 text-zinc-950 font-bold shadow-lg shadow-cyan-500/20',
-    badge: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20'
+    glow: 'from-orange-500/30 via-slate-950 to-slate-950',
+    bgImage: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=2000&auto=format&fit=crop',
+    card: 'bg-slate-900/85 border-orange-500/30 shadow-orange-950/20 shadow-xl backdrop-blur-xl',
+    accent: 'text-orange-500',
+    btn: 'bg-orange-500 hover:bg-orange-600 text-slate-950 font-bold shadow-lg shadow-orange-500/25',
+    badge: 'bg-orange-500/10 text-orange-400 border-orange-500/30'
   },
   stream: {
-    name: '🐟 공지천 티어',
+    name: '🐟 공지천',
     bg: 'bg-stone-950',
-    glow: 'from-emerald-500/30 via-stone-950 to-stone-950',
+    glow: 'from-teal-500/30 via-stone-950 to-stone-950',
     bgImage: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2000&auto=format&fit=crop',
-    card: 'bg-stone-900/85 border-stone-800/80 shadow-emerald-900/20 shadow-xl backdrop-blur-xl',
+    card: 'bg-stone-900/85 border-teal-500/30 shadow-teal-950/20 shadow-xl backdrop-blur-xl',
+    accent: 'text-teal-400',
+    btn: 'bg-teal-500 hover:bg-teal-600 text-stone-950 font-bold shadow-lg shadow-teal-500/25',
+    badge: 'bg-teal-500/10 text-teal-300 border-teal-500/30'
+  },
+  mountain: {
+    name: '🌲 야산',
+    bg: 'bg-zinc-950',
+    glow: 'from-emerald-600/30 via-zinc-950 to-zinc-950',
+    bgImage: 'https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2000&auto=format&fit=crop',
+    card: 'bg-zinc-900/85 border-emerald-600/30 shadow-emerald-950/20 shadow-xl backdrop-blur-xl',
     accent: 'text-emerald-400',
-    btn: 'bg-emerald-500 hover:bg-emerald-600 text-stone-950 font-bold shadow-lg shadow-emerald-500/20',
-    badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+    btn: 'bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold shadow-lg shadow-emerald-600/25',
+    badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
   },
-  amber: {
-    name: '☕ 앰버 서재',
+  ru_armory: {
+    name: '🎖️ 러시아의 무기고',
     bg: 'bg-neutral-950',
-    glow: 'from-orange-500/20 via-neutral-950 to-neutral-950',
-    card: 'bg-neutral-900/80 border-neutral-800/80 shadow-orange-900/10 shadow-lg backdrop-blur-xl',
-    accent: 'text-orange-400',
-    btn: 'bg-orange-500 hover:bg-orange-600 text-neutral-950 font-bold shadow-lg shadow-orange-500/20',
-    badge: 'bg-orange-500/10 text-orange-400 border-orange-500/20'
+    glow: 'from-red-600/30 via-neutral-950 to-neutral-950',
+    bgImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2000&auto=format&fit=crop',
+    card: 'bg-neutral-900/85 border-red-700/30 shadow-red-950/20 shadow-xl backdrop-blur-xl',
+    accent: 'text-red-500',
+    btn: 'bg-red-600 hover:bg-red-500 text-white font-bold shadow-lg shadow-red-600/25',
+    badge: 'bg-red-500/10 text-red-400 border-red-500/30'
   },
-  minimal: {
-    name: '🖤 딥 미니멀',
-    bg: 'bg-black',
-    glow: 'from-zinc-700/20 via-black to-black',
-    card: 'bg-zinc-900/60 border-zinc-800/80 backdrop-blur-xl',
-    accent: 'text-zinc-200',
-    btn: 'bg-zinc-200 hover:bg-white text-zinc-950 font-bold shadow-lg shadow-white/10',
-    badge: 'bg-zinc-800 text-zinc-300 border-zinc-700'
+  us_armory: {
+    name: '🦅 미국의 무기고',
+    bg: 'bg-stone-950',
+    glow: 'from-amber-600/30 via-stone-950 to-stone-950',
+    bgImage: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?q=80&w=2000&auto=format&fit=crop',
+    card: 'bg-stone-900/85 border-amber-600/30 shadow-stone-950/30 shadow-xl backdrop-blur-xl',
+    accent: 'text-amber-400',
+    btn: 'bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold shadow-lg shadow-amber-600/25',
+    badge: 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+  },
+  de_armory: {
+    name: '🛡️ 독일의 무기고',
+    bg: 'bg-zinc-950',
+    glow: 'from-yellow-500/25 via-zinc-950 to-zinc-950',
+    bgImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2000&auto=format&fit=crop',
+    card: 'bg-zinc-900/85 border-zinc-700/50 shadow-zinc-950/30 shadow-xl backdrop-blur-xl',
+    accent: 'text-yellow-500',
+    btn: 'bg-zinc-200 hover:bg-white text-zinc-950 font-bold shadow-lg shadow-white/20',
+    badge: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30'
   }
 };
 
 export default function AgitMain() {
-  // 아지트 전체 로그인 보안 상태
+  // 아지트 마스터 보안
   const [isAppUnlocked, setIsAppUnlocked] = useState(false);
   const [masterPin, setMasterPin] = useState('1234');
   const [loginInput, setLoginInput] = useState('');
@@ -60,15 +84,15 @@ export default function AgitMain() {
 
   // 네비게이션 & 테마
   const [tab, setTab] = useState('dash');
-  const [themeKey, setThemeKey] = useState('stream');
+  const [themeKey, setThemeKey] = useState('dugout');
   const [timeStr, setTimeStr] = useState('');
   const [dateStr, setDateStr] = useState('');
   
-  // 비밀 일기장 전용 개별 PIN
+  // 비밀 일기장
   const [isDiaryLocked, setIsDiaryLocked] = useState(true);
   const [diaryPinInput, setDiaryPinInput] = useState('');
 
-  // 데이터 상태
+  // 기존 데이터 상태
   const [diaries, setDiaries] = useState([
     { id: 1, date: '2026-10-10', title: '나만의 웹 아지트 개편', content: '깔끔하고 정돈된 스타일로 개편 완료!', emoji: '⚡', weather: '☀️ 맑음' }
   ]);
@@ -83,13 +107,60 @@ export default function AgitMain() {
     { id: 2, title: 'Vercel 대시보드', url: 'https://vercel.com', icon: '🚀' }
   ]);
 
+  // 🐟 신규: 낚시 & 생물 탐어일지 데이터
+  const [fishLogs, setFishLogs] = useState([
+    {
+      id: 1,
+      date: '2026-10-12',
+      title: '공지천 꺽지 채집 및 탐어',
+      species: '꺽지',
+      location: '공지천 상류',
+      category: '민물고기/탐어',
+      size: '18cm',
+      memo: '여울지대 돌틈에서 유인하여 족대로 채집 성공.',
+      photoUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      id: 2,
+      date: '2026-09-28',
+      title: '아시안 포레스트 전갈 피딩 및 기록',
+      species: '아시안 포레스트 전갈',
+      location: '사육장',
+      category: '희귀생물/사육',
+      size: '12cm',
+      memo: '탈피 후 건장하게 활동 중. 습도 75% 유지.',
+      photoUrl: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=800&auto=format&fit=crop'
+    }
+  ]);
+  const [fishCategoryFilter, setFishCategoryFilter] = useState('전체');
+
   // 입력 폼
   const [newDiary, setNewDiary] = useState({ title: '', content: '', emoji: '😊', weather: '☀️ 맑음' });
   const [newNote, setNewNote] = useState({ title: '', content: '', category: '일반' });
   const [newTodo, setNewTodo] = useState({ content: '', priority: 'normal', dDay: '' });
   const [newBmk, setNewBmk] = useState({ title: '', url: '', icon: '🔗' });
+  const [newFishLog, setNewFishLog] = useState({
+    title: '',
+    species: '',
+    location: '',
+    category: '민물고기/탐어',
+    size: '',
+    memo: '',
+    photoUrl: ''
+  });
 
-  // 로컬 세션 보존
+  // 사진 업로드 미리보기 및 base64 변환
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewFishLog(prev => ({ ...prev, photoUrl: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   useEffect(() => {
     const savedPin = localStorage.getItem('agit_master_pin');
     if (savedPin) setMasterPin(savedPin);
@@ -105,9 +176,8 @@ export default function AgitMain() {
     return () => clearInterval(timer);
   }, []);
 
-  const curTheme = THEMES[themeKey] || THEMES.stream;
+  const curTheme = THEMES[themeKey] || THEMES.dugout;
 
-  // 마스터 로그인 처리
   const handleLogin = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (loginInput === masterPin) {
@@ -120,13 +190,11 @@ export default function AgitMain() {
     }
   };
 
-  // 로그아웃 처리
   const handleLogout = () => {
     setIsAppUnlocked(false);
     sessionStorage.removeItem('agit_authenticated');
   };
 
-  // 비밀번호 변경 처리
   const handlePinChange = (newPin: string) => {
     setMasterPin(newPin);
     localStorage.setItem('agit_master_pin', newPin);
@@ -139,23 +207,25 @@ export default function AgitMain() {
     return diff > 0 ? `D-${diff}` : `D+${Math.abs(diff)}`;
   };
 
+  const filteredFishLogs = fishCategoryFilter === '전체'
+    ? fishLogs
+    : fishLogs.filter(f => f.category === fishCategoryFilter);
+
   return (
     <div className={`min-h-screen ${curTheme.bg} text-slate-100 font-sans selection:bg-amber-500 selection:text-black transition-colors duration-500 relative overflow-hidden`}>
       {/* 배경 사진 연출 */}
       {curTheme.bgImage && (
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 pointer-events-none transition-all duration-700 filter brightness-90 contrast-110"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 pointer-events-none transition-all duration-700 filter brightness-90 contrast-110"
           style={{ backgroundImage: `url('${curTheme.bgImage}')` }}
         />
       )}
 
-      {/* 은은한 앰비언트 라이트 조명 */}
+      {/* 은은한 앰비언트 조명 */}
       <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-gradient-to-b ${curTheme.glow} blur-[120px] pointer-events-none opacity-60 transition-all duration-700`} />
-      
-      {/* 격자 그리드 연출 */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
 
-      {/* ==================== 1. 로그인 잠금 화면 ==================== */}
+      {/* ==================== 1. 마스터 로그인 ==================== */}
       {!isAppUnlocked ? (
         <div className="min-h-screen flex items-center justify-center p-4 relative z-20">
           <div className={`max-w-md w-full p-8 rounded-3xl border ${curTheme.card} text-center space-y-6 shadow-2xl backdrop-blur-2xl`}>
@@ -197,19 +267,19 @@ export default function AgitMain() {
           </div>
         </div>
       ) : (
-        /* ==================== 2. 아지트 대시보드 메인 ==================== */
+        /* ==================== 2. 대시보드 메인 ==================== */
         <>
-          {/* GNB 메인 네비게이션 */}
           <header className="border-b border-slate-800/80 sticky top-0 z-50 backdrop-blur-md bg-slate-950/70">
-            <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+            <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 sm:gap-3 cursor-pointer" onClick={() => setTab('dash')}>
                 <span className="text-xl sm:text-2xl">⚡</span>
-                <span className="font-black text-base sm:text-lg tracking-tight text-white hidden sm:inline">MY AGIT</span>
+                <span className="font-black text-base sm:text-lg tracking-tight text-white hidden md:inline">MY AGIT</span>
               </div>
 
-              <nav className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm font-medium">
+              <nav className="flex items-center gap-1 sm:gap-1.5 text-xs font-medium overflow-x-auto py-2">
                 {[
                   ['dash', '🏠 대시보드'],
+                  ['fish', '🐟 생물/낚시'],
                   ['diary', '📖 일기장'],
                   ['note', '📝 메모장'],
                   ['todo', '🎯 To-Do'],
@@ -219,7 +289,7 @@ export default function AgitMain() {
                   <button
                     key={k}
                     onClick={() => setTab(k)}
-                    className={`px-2.5 sm:px-3 py-1.5 rounded-lg transition-all ${tab === k ? curTheme.btn : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}`}
+                    className={`px-2.5 py-1.5 rounded-lg whitespace-nowrap transition-all ${tab === k ? curTheme.btn : 'text-slate-400 hover:text-white hover:bg-slate-800/50'}`}
                   >
                     {label}
                   </button>
@@ -228,7 +298,7 @@ export default function AgitMain() {
 
               <button
                 onClick={handleLogout}
-                className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-red-950 hover:text-red-400 border border-slate-800 text-slate-400 transition"
+                className="text-xs px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-red-950 hover:text-red-400 border border-slate-800 text-slate-400 transition whitespace-nowrap"
                 title="아지트 잠그기"
               >
                 🔒 잠금
@@ -236,16 +306,15 @@ export default function AgitMain() {
             </div>
           </header>
 
-          {/* 메인 컨텐츠 영역 */}
-          <main className="max-w-5xl mx-auto px-4 py-8 space-y-6 relative z-10">
+          <main className="max-w-6xl mx-auto px-4 py-8 space-y-6 relative z-10">
             
-            {/* 1. 대시보드 (Dashboard) */}
+            {/* 1. 대시보드 */}
             {tab === 'dash' && (
               <div className="space-y-6">
                 <div className={`p-8 rounded-2xl border ${curTheme.card} flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-2xl`}>
                   <div>
                     <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border ${curTheme.badge} mb-2`}>
-                      PERSONAL DASHBOARD
+                      PERSONAL AGIT DASHBOARD
                     </span>
                     <h1 className="text-2xl sm:text-3xl font-black text-white">오늘도 나만의 페이스로 ⚡</h1>
                     <p className="text-xs text-slate-400 mt-1">{dateStr}</p>
@@ -258,28 +327,32 @@ export default function AgitMain() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  {/* 생물/낚시 최근 기록 */}
                   <div className={`p-5 rounded-2xl border ${curTheme.card} space-y-3`}>
                     <div className="flex justify-between items-center">
-                      <h3 className="font-bold text-sm text-slate-200">📖 최근 일기</h3>
-                      <button onClick={() => setTab('diary')} className="text-xs text-slate-400 hover:text-white">더보기 →</button>
+                      <h3 className="font-bold text-sm text-slate-200">🐟 최근 탐어/생물 기록</h3>
+                      <button onClick={() => setTab('fish')} className="text-xs text-slate-400 hover:text-white">더보기 →</button>
                     </div>
-                    {diaries.length > 0 ? (
-                      <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
+                    {fishLogs.length > 0 ? (
+                      <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2">
+                        {fishLogs[0].photoUrl && (
+                          <img src={fishLogs[0].photoUrl} alt="탐어 사진" className="w-full h-24 object-cover rounded-lg" />
+                        )}
                         <div className="flex justify-between text-xs text-slate-400">
-                          <span>{diaries[0].date}</span>
-                          <span>{diaries[0].emoji} {diaries[0].weather}</span>
+                          <span className="font-bold text-amber-400">{fishLogs[0].species} ({fishLogs[0].size})</span>
+                          <span>{fishLogs[0].date}</span>
                         </div>
-                        <div className="font-semibold text-sm text-white truncate">{diaries[0].title}</div>
-                        <div className="text-xs text-slate-400 line-clamp-2">{diaries[0].content}</div>
+                        <div className="font-semibold text-xs text-white truncate">{fishLogs[0].title}</div>
                       </div>
                     ) : (
-                      <p className="text-xs text-slate-500 py-4 text-center">작성된 일기가 없습니다.</p>
+                      <p className="text-xs text-slate-500 py-4 text-center">등록된 생물 기록이 없습니다.</p>
                     )}
                   </div>
 
+                  {/* 중요 메모 */}
                   <div className={`p-5 rounded-2xl border ${curTheme.card} space-y-3`}>
                     <div className="flex justify-between items-center">
-                      <h3 className="font-bold text-sm text-slate-200">📌 중요 메모</h3>
+                      <h3 className="font-bold text-sm text-slate-200">📌 중요 고정 메모</h3>
                       <button onClick={() => setTab('note')} className="text-xs text-slate-400 hover:text-white">더보기 →</button>
                     </div>
                     {notes.filter(n => n.isPinned).length > 0 ? (
@@ -291,10 +364,11 @@ export default function AgitMain() {
                         </div>
                       ))
                     ) : (
-                      <p className="text-xs text-slate-500 py-4 text-center">상단 고정된 메모가 없습니다.</p>
+                      <p className="text-xs text-slate-500 py-4 text-center">고정된 메모가 없습니다.</p>
                     )}
                   </div>
 
+                  {/* To-Do */}
                   <div className={`p-5 rounded-2xl border ${curTheme.card} space-y-3`}>
                     <div className="flex justify-between items-center">
                       <h3 className="font-bold text-sm text-slate-200">🎯 To-Do & D-Day</h3>
@@ -313,7 +387,169 @@ export default function AgitMain() {
               </div>
             )}
 
-            {/* 2. 비밀 일기장 (Private Diary) */}
+            {/* 2. 🐟 생물 & 낚시 탐어일지 (신규) */}
+            {tab === 'fish' && (
+              <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4">
+                  <div>
+                    <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                      🐟 생물 & 낚시 탐어일지
+                    </h2>
+                    <p className="text-xs text-slate-400 mt-0.5">민물고기, 낚시, 사육 생물 채집 및 관찰 기록장</p>
+                  </div>
+
+                  {/* 카테고리 필터 버튼 */}
+                  <div className="flex gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+                    {['전체', '민물고기/탐어', '루어/대낚시', '희귀생물/사육', '기타'].map(cat => (
+                      <button
+                        key={cat}
+                        onClick={() => setFishCategoryFilter(cat)}
+                        className={`px-2.5 py-1 rounded-lg transition ${fishCategoryFilter === cat ? curTheme.btn : 'text-slate-400 hover:text-white'}`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 기록 등록 폼 */}
+                <div className="p-5 rounded-xl bg-slate-950/60 border border-slate-800 space-y-4">
+                  <h3 className="text-xs font-bold text-slate-300">새 탐어 / 생물 기록 작성</h3>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <input
+                      type="text"
+                      placeholder="기록 제목 (예: 공지천 꺽지 탐어)"
+                      value={newFishLog.title}
+                      onChange={(e) => setNewFishLog({ ...newFishLog, title: e.target.value })}
+                      className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white"
+                    />
+                    <input
+                      type="text"
+                      placeholder="생물/어종명 (예: 꺽지, 아시안포레스트)"
+                      value={newFishLog.species}
+                      onChange={(e) => setNewFishLog({ ...newFishLog, species: e.target.value })}
+                      className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white"
+                    />
+                    <select
+                      value={newFishLog.category}
+                      onChange={(e) => setNewFishLog({ ...newFishLog, category: e.target.value })}
+                      className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white"
+                    >
+                      <option value="민물고기/탐어">민물고기/탐어</option>
+                      <option value="루어/대낚시">루어/대낚시</option>
+                      <option value="희귀생물/사육">희귀생물/사육</option>
+                      <option value="기타">기타</option>
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <input
+                      type="text"
+                      placeholder="장소 / 포인트 (예: 공지천 상류)"
+                      value={newFishLog.location}
+                      onChange={(e) => setNewFishLog({ ...newFishLog, location: e.target.value })}
+                      className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white"
+                    />
+                    <input
+                      type="text"
+                      placeholder="크기 / 개체 수 (예: 18cm / 2마리)"
+                      value={newFishLog.size}
+                      onChange={(e) => setNewFishLog({ ...newFishLog, size: e.target.value })}
+                      className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white"
+                    />
+                    
+                    {/* 사진 업로드 버튼 */}
+                    <div className="flex items-center gap-2">
+                      <label className="flex-1 cursor-pointer px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 hover:border-slate-600 text-center truncate">
+                        {newFishLog.photoUrl ? '📸 사진 첨부됨' : '📷 사진 선택 (파일)'}
+                        <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <textarea
+                    placeholder="채집 환경, 미끼, 포획/사육 메모를 적어보세요..."
+                    value={newFishLog.memo}
+                    onChange={(e) => setNewFishLog({ ...newFishLog, memo: e.target.value })}
+                    className="w-full h-20 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none resize-none"
+                  />
+
+                  {newFishLog.photoUrl && (
+                    <div className="relative w-32 h-20 rounded-lg overflow-hidden border border-slate-700">
+                      <img src={newFishLog.photoUrl} alt="미리보기" className="w-full h-full object-cover" />
+                      <button
+                        onClick={() => setNewFishLog({ ...newFishLog, photoUrl: '' })}
+                        className="absolute top-1 right-1 bg-black/70 text-white rounded-full w-5 h-5 text-[10px]"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      if (!newFishLog.title || !newFishLog.species) return;
+                      setFishLogs([
+                        { id: Date.now(), date: new Date().toISOString().split('T')[0], ...newFishLog },
+                        ...fishLogs
+                      ]);
+                      setNewFishLog({
+                        title: '',
+                        species: '',
+                        location: '',
+                        category: '민물고기/탐어',
+                        size: '',
+                        memo: '',
+                        photoUrl: ''
+                      });
+                    }}
+                    className={`w-full py-2.5 rounded-xl ${curTheme.btn} text-xs font-bold`}
+                  >
+                    탐어 기록 등록하기
+                  </button>
+                </div>
+
+                {/* 기록 카드 리스트 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {filteredFishLogs.map(log => (
+                    <div key={log.id} className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3 relative group">
+                      {log.photoUrl && (
+                        <div className="w-full h-44 rounded-lg overflow-hidden border border-slate-800/80">
+                          <img src={log.photoUrl} alt={log.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                        </div>
+                      )}
+                      
+                      <div className="flex justify-between items-start gap-2">
+                        <div>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">{log.category}</span>
+                          <h4 className="font-bold text-base text-white mt-1">{log.title}</h4>
+                        </div>
+                        <button
+                          onClick={() => setFishLogs(fishLogs.filter(x => x.id !== log.id))}
+                          className="text-xs text-slate-500 hover:text-red-400"
+                        >
+                          삭제
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs p-2.5 rounded-lg bg-slate-900/60 border border-slate-800/60">
+                        <div><span className="text-slate-500">생물/어종:</span> <span className="text-amber-400 font-bold">{log.species}</span></div>
+                        <div><span className="text-slate-500">크기/수량:</span> <span className="text-white font-mono">{log.size || '-'}</span></div>
+                        <div><span className="text-slate-500">장소:</span> <span className="text-slate-300">{log.location || '-'}</span></div>
+                        <div><span className="text-slate-500">날짜:</span> <span className="text-slate-300">{log.date}</span></div>
+                      </div>
+
+                      {log.memo && (
+                        <p className="text-xs text-slate-300 leading-relaxed whitespace-pre-wrap">{log.memo}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 3. 비밀 일기장 */}
             {tab === 'diary' && (
               <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
                 <div className="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -399,7 +635,7 @@ export default function AgitMain() {
               </div>
             )}
 
-            {/* 3. 스마트 메모장 (Notes) */}
+            {/* 4. 메모장 */}
             {tab === 'note' && (
               <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
                 <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">📝 스마트 메모장</h2>
@@ -459,7 +695,7 @@ export default function AgitMain() {
               </div>
             )}
 
-            {/* 4. To-Do & D-Day */}
+            {/* 5. To-Do */}
             {tab === 'todo' && (
               <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
                 <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">🎯 To-Do & D-Day 관리</h2>
@@ -511,7 +747,7 @@ export default function AgitMain() {
               </div>
             )}
 
-            {/* 5. 아카이브 (Archive) */}
+            {/* 6. 아카이브 */}
             {tab === 'archive' && (
               <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
                 <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">🚀 개인 북마크 & 아카이브</h2>
@@ -562,21 +798,21 @@ export default function AgitMain() {
               </div>
             )}
 
-            {/* 6. 설정 (Settings) */}
+            {/* 7. 설정 */}
             {tab === 'setting' && (
               <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
-                <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">⚙️ 테마 및 보안 설정</h2>
+                <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">⚙️ 6종 특화 테마 및 보안 설정</h2>
                 
                 <div className="space-y-4">
-                  <label className="block text-xs font-bold text-slate-300">프리셋 테마 선택</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                  <label className="block text-xs font-bold text-slate-300">커스텀 특화 테마 선택</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {Object.entries(THEMES).map(([k, t]) => (
                       <button
                         key={k}
                         onClick={() => setThemeKey(k)}
-                        className={`p-3 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-1 ${themeKey === k ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:text-white'}`}
+                        className={`p-4 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-2 ${themeKey === k ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:text-white'}`}
                       >
-                        <span>{t.name}</span>
+                        <span className="text-sm">{t.name}</span>
                       </button>
                     ))}
                   </div>
@@ -584,7 +820,6 @@ export default function AgitMain() {
 
                 <div className="pt-4 border-t border-slate-800 space-y-3">
                   <label className="block text-xs font-bold text-slate-300">🔒 아지트 마스터 PIN 비밀번호 변경</label>
-                  <p className="text-[11px] text-slate-400">아지트 전체 로그인 및 비밀 일기장에 적용되는 보안 PIN입니다.</p>
                   <div className="flex gap-3 max-w-xs">
                     <input
                       type="text"
