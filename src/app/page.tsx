@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 
-// 6가지 프리미엄 특화 테마
 const THEMES: Record<string, { 
   name: string; 
   bg: string; 
@@ -76,90 +75,33 @@ const THEMES: Record<string, {
 };
 
 export default function AgitMain() {
-  // 아지트 마스터 보안
   const [isAppUnlocked, setIsAppUnlocked] = useState(false);
   const [masterPin, setMasterPin] = useState('1234');
   const [loginInput, setLoginInput] = useState('');
   const [loginError, setLoginError] = useState(false);
 
-  // 네비게이션 & 테마
   const [tab, setTab] = useState('dash');
   const [themeKey, setThemeKey] = useState('dugout');
   const [timeStr, setTimeStr] = useState('');
   const [dateStr, setDateStr] = useState('');
   
-  // 비밀 일기장
   const [isDiaryLocked, setIsDiaryLocked] = useState(true);
   const [diaryPinInput, setDiaryPinInput] = useState('');
 
-  // 기존 데이터 상태
-  const [diaries, setDiaries] = useState([
-    { id: 1, date: '2026-10-10', title: '나만의 웹 아지트 개편', content: '깔끔하고 정돈된 스타일로 개편 완료!', emoji: '⚡', weather: '☀️ 맑음' }
-  ]);
-  const [notes, setNotes] = useState([
-    { id: 1, title: '프로젝트 아이디어', content: 'Raspberry Pi와 ESP32 센서 모듈 연동 테스트', category: '개발', isPinned: true }
-  ]);
-  const [todos, setTodos] = useState([
-    { id: 1, content: '아지트 테마 설정 완료하기', isDone: true, priority: 'high', dDay: '2026-10-15' }
-  ]);
-  const [bookmarks, setBookmarks] = useState([
-    { id: 1, title: 'GitHub 저장소', url: 'https://github.com', icon: '💻' },
-    { id: 2, title: 'Vercel 대시보드', url: 'https://vercel.com', icon: '🚀' }
-  ]);
-
-  // 🐟 신규: 낚시 & 생물 탐어일지 데이터
-  const [fishLogs, setFishLogs] = useState([
-    {
-      id: 1,
-      date: '2026-10-12',
-      title: '공지천 꺽지 채집 및 탐어',
-      species: '꺽지',
-      location: '공지천 상류',
-      category: '민물고기/탐어',
-      size: '18cm',
-      memo: '여울지대 돌틈에서 유인하여 족대로 채집 성공.',
-      photoUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=800&auto=format&fit=crop'
-    },
-    {
-      id: 2,
-      date: '2026-09-28',
-      title: '아시안 포레스트 전갈 피딩 및 기록',
-      species: '아시안 포레스트 전갈',
-      location: '사육장',
-      category: '희귀생물/사육',
-      size: '12cm',
-      memo: '탈피 후 건장하게 활동 중. 습도 75% 유지.',
-      photoUrl: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=800&auto=format&fit=crop'
-    }
-  ]);
+  const [diaries, setDiaries] = useState<any[]>([]);
+  const [notes, setNotes] = useState<any[]>([]);
+  const [todos, setTodos] = useState<any[]>([]);
+  const [bookmarks, setBookmarks] = useState<any[]>([]);
+  const [fishLogs, setFishLogs] = useState<any[]>([]);
   const [fishCategoryFilter, setFishCategoryFilter] = useState('전체');
 
-  // 입력 폼
   const [newDiary, setNewDiary] = useState({ title: '', content: '', emoji: '😊', weather: '☀️ 맑음' });
   const [newNote, setNewNote] = useState({ title: '', content: '', category: '일반' });
   const [newTodo, setNewTodo] = useState({ content: '', priority: 'normal', dDay: '' });
   const [newBmk, setNewBmk] = useState({ title: '', url: '', icon: '🔗' });
   const [newFishLog, setNewFishLog] = useState({
-    title: '',
-    species: '',
-    location: '',
-    category: '민물고기/탐어',
-    size: '',
-    memo: '',
-    photoUrl: ''
+    title: '', species: '', location: '', category: '민물고기/탐어', size: '', memo: '', photoUrl: ''
   });
-
-  // 사진 업로드 미리보기 및 base64 변환
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setNewFishLog(prev => ({ ...prev, photoUrl: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   useEffect(() => {
     const savedPin = localStorage.getItem('agit_master_pin');
@@ -167,6 +109,33 @@ export default function AgitMain() {
     
     const isAuth = sessionStorage.getItem('agit_authenticated');
     if (isAuth === 'true') setIsAppUnlocked(true);
+
+    const savedTheme = localStorage.getItem('agit_theme_key');
+    if (savedTheme) setThemeKey(savedTheme);
+
+    const lDiaries = localStorage.getItem('agit_diaries');
+    if (lDiaries) setDiaries(JSON.parse(lDiaries));
+    const lNotes = localStorage.getItem('agit_notes');
+    if (lNotes) setNotes(JSON.parse(lNotes));
+    const lTodos = localStorage.getItem('agit_todos');
+    if (lTodos) setTodos(JSON.parse(lTodos));
+    const lBmk = localStorage.getItem('agit_bookmarks');
+    if (lBmk) setBookmarks(JSON.parse(lBmk));
+    const lFish = localStorage.getItem('agit_fish_logs');
+    if (lFish) setFishLogs(JSON.parse(lFish));
+
+    fetch('/api/agit')
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.data) {
+          if (res.data.diaries?.length) { setDiaries(res.data.diaries); localStorage.setItem('agit_diaries', JSON.stringify(res.data.diaries)); }
+          if (res.data.notes?.length) { setNotes(res.data.notes); localStorage.setItem('agit_notes', JSON.stringify(res.data.notes)); }
+          if (res.data.todos?.length) { setTodos(res.data.todos); localStorage.setItem('agit_todos', JSON.stringify(res.data.todos)); }
+          if (res.data.bookmarks?.length) { setBookmarks(res.data.bookmarks); localStorage.setItem('agit_bookmarks', JSON.stringify(res.data.bookmarks)); }
+          if (res.data.fishLogs?.length) { setFishLogs(res.data.fishLogs); localStorage.setItem('agit_fish_logs', JSON.stringify(res.data.fishLogs)); }
+        }
+      })
+      .catch(() => {});
 
     const timer = setInterval(() => {
       const now = new Date();
@@ -177,6 +146,26 @@ export default function AgitMain() {
   }, []);
 
   const curTheme = THEMES[themeKey] || THEMES.dugout;
+
+  const syncData = (type: string, action: string, data: any, updatedList: any[], lsKey: string) => {
+    localStorage.setItem(lsKey, JSON.stringify(updatedList));
+    fetch('/api/agit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, action, data })
+    }).catch(() => {});
+  };
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewFishLog(prev => ({ ...prev, photoUrl: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleLogin = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -200,6 +189,11 @@ export default function AgitMain() {
     localStorage.setItem('agit_master_pin', newPin);
   };
 
+  const handleThemeChange = (key: string) => {
+    setThemeKey(key);
+    localStorage.setItem('agit_theme_key', key);
+  };
+
   const calcDday = (targetDate: string) => {
     if (!targetDate) return null;
     const diff = Math.ceil((new Date(targetDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
@@ -213,7 +207,6 @@ export default function AgitMain() {
 
   return (
     <div className={`min-h-screen ${curTheme.bg} text-slate-100 font-sans selection:bg-amber-500 selection:text-black transition-colors duration-500 relative overflow-hidden`}>
-      {/* 배경 사진 연출 */}
       {curTheme.bgImage && (
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-25 pointer-events-none transition-all duration-700 filter brightness-90 contrast-110"
@@ -221,11 +214,9 @@ export default function AgitMain() {
         />
       )}
 
-      {/* 은은한 앰비언트 조명 */}
       <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-gradient-to-b ${curTheme.glow} blur-[120px] pointer-events-none opacity-60 transition-all duration-700`} />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
 
-      {/* ==================== 1. 마스터 로그인 ==================== */}
       {!isAppUnlocked ? (
         <div className="min-h-screen flex items-center justify-center p-4 relative z-20">
           <div className={`max-w-md w-full p-8 rounded-3xl border ${curTheme.card} text-center space-y-6 shadow-2xl backdrop-blur-2xl`}>
@@ -267,7 +258,6 @@ export default function AgitMain() {
           </div>
         </div>
       ) : (
-        /* ==================== 2. 대시보드 메인 ==================== */
         <>
           <header className="border-b border-slate-800/80 sticky top-0 z-50 backdrop-blur-md bg-slate-950/70">
             <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
@@ -307,8 +297,6 @@ export default function AgitMain() {
           </header>
 
           <main className="max-w-6xl mx-auto px-4 py-8 space-y-6 relative z-10">
-            
-            {/* 1. 대시보드 */}
             {tab === 'dash' && (
               <div className="space-y-6">
                 <div className={`p-8 rounded-2xl border ${curTheme.card} flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-2xl`}>
@@ -327,7 +315,6 @@ export default function AgitMain() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  {/* 생물/낚시 최근 기록 */}
                   <div className={`p-5 rounded-2xl border ${curTheme.card} space-y-3`}>
                     <div className="flex justify-between items-center">
                       <h3 className="font-bold text-sm text-slate-200">🐟 최근 탐어/생물 기록</h3>
@@ -335,8 +322,8 @@ export default function AgitMain() {
                     </div>
                     {fishLogs.length > 0 ? (
                       <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2">
-                        {fishLogs[0].photoUrl && (
-                          <img src={fishLogs[0].photoUrl} alt="탐어 사진" className="w-full h-24 object-cover rounded-lg" />
+                        {(fishLogs[0].photo_url || fishLogs[0].photoUrl) && (
+                          <img src={fishLogs[0].photo_url || fishLogs[0].photoUrl} alt="탐어 사진" className="w-full h-24 object-cover rounded-lg" />
                         )}
                         <div className="flex justify-between text-xs text-slate-400">
                           <span className="font-bold text-amber-400">{fishLogs[0].species} ({fishLogs[0].size})</span>
@@ -349,14 +336,13 @@ export default function AgitMain() {
                     )}
                   </div>
 
-                  {/* 중요 메모 */}
                   <div className={`p-5 rounded-2xl border ${curTheme.card} space-y-3`}>
                     <div className="flex justify-between items-center">
                       <h3 className="font-bold text-sm text-slate-200">📌 중요 고정 메모</h3>
                       <button onClick={() => setTab('note')} className="text-xs text-slate-400 hover:text-white">더보기 →</button>
                     </div>
-                    {notes.filter(n => n.isPinned).length > 0 ? (
-                      notes.filter(n => n.isPinned).slice(0, 2).map(n => (
+                    {notes.filter(n => n.is_pinned || n.isPinned).length > 0 ? (
+                      notes.filter(n => n.is_pinned || n.isPinned).slice(0, 2).map(n => (
                         <div key={n.id} className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 space-y-1">
                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">{n.category}</span>
                           <div className="font-semibold text-sm text-white truncate">{n.title}</div>
@@ -368,7 +354,6 @@ export default function AgitMain() {
                     )}
                   </div>
 
-                  {/* To-Do */}
                   <div className={`p-5 rounded-2xl border ${curTheme.card} space-y-3`}>
                     <div className="flex justify-between items-center">
                       <h3 className="font-bold text-sm text-slate-200">🎯 To-Do & D-Day</h3>
@@ -377,8 +362,8 @@ export default function AgitMain() {
                     <div className="space-y-2">
                       {todos.slice(0, 3).map(t => (
                         <div key={t.id} className="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs">
-                          <span className={t.isDone ? 'line-through text-slate-500' : 'text-slate-200'}>{t.content}</span>
-                          {t.dDay && <span className={`font-mono font-bold ${curTheme.accent}`}>{calcDday(t.dDay)}</span>}
+                          <span className={(t.is_done || t.isDone) ? 'line-through text-slate-500' : 'text-slate-200'}>{t.content}</span>
+                          {(t.d_day_date || t.dDay) && <span className={`font-mono font-bold ${curTheme.accent}`}>{calcDday(t.d_day_date || t.dDay)}</span>}
                         </div>
                       ))}
                     </div>
@@ -387,7 +372,6 @@ export default function AgitMain() {
               </div>
             )}
 
-            {/* 2. 🐟 생물 & 낚시 탐어일지 (신규) */}
             {tab === 'fish' && (
               <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 pb-4">
@@ -398,7 +382,6 @@ export default function AgitMain() {
                     <p className="text-xs text-slate-400 mt-0.5">민물고기, 낚시, 사육 생물 채집 및 관찰 기록장</p>
                   </div>
 
-                  {/* 카테고리 필터 버튼 */}
                   <div className="flex gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
                     {['전체', '민물고기/탐어', '루어/대낚시', '희귀생물/사육', '기타'].map(cat => (
                       <button
@@ -412,7 +395,6 @@ export default function AgitMain() {
                   </div>
                 </div>
 
-                {/* 기록 등록 폼 */}
                 <div className="p-5 rounded-xl bg-slate-950/60 border border-slate-800 space-y-4">
                   <h3 className="text-xs font-bold text-slate-300">새 탐어 / 생물 기록 작성</h3>
                   
@@ -459,7 +441,6 @@ export default function AgitMain() {
                       className="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white"
                     />
                     
-                    {/* 사진 업로드 버튼 */}
                     <div className="flex items-center gap-2">
                       <label className="flex-1 cursor-pointer px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 hover:border-slate-600 text-center truncate">
                         {newFishLog.photoUrl ? '📸 사진 첨부됨' : '📷 사진 선택 (파일)'}
@@ -490,19 +471,11 @@ export default function AgitMain() {
                   <button
                     onClick={() => {
                       if (!newFishLog.title || !newFishLog.species) return;
-                      setFishLogs([
-                        { id: Date.now(), date: new Date().toISOString().split('T')[0], ...newFishLog },
-                        ...fishLogs
-                      ]);
-                      setNewFishLog({
-                        title: '',
-                        species: '',
-                        location: '',
-                        category: '민물고기/탐어',
-                        size: '',
-                        memo: '',
-                        photoUrl: ''
-                      });
+                      const item = { id: Date.now(), date: new Date().toISOString().split('T')[0], ...newFishLog };
+                      const updated = [item, ...fishLogs];
+                      setFishLogs(updated);
+                      syncData('fish', 'add', item, updated, 'agit_fish_logs');
+                      setNewFishLog({ title: '', species: '', location: '', category: '민물고기/탐어', size: '', memo: '', photoUrl: '' });
                     }}
                     className={`w-full py-2.5 rounded-xl ${curTheme.btn} text-xs font-bold`}
                   >
@@ -510,13 +483,12 @@ export default function AgitMain() {
                   </button>
                 </div>
 
-                {/* 기록 카드 리스트 */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {filteredFishLogs.map(log => (
                     <div key={log.id} className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-3 relative group">
-                      {log.photoUrl && (
+                      {(log.photo_url || log.photoUrl) && (
                         <div className="w-full h-44 rounded-lg overflow-hidden border border-slate-800/80">
-                          <img src={log.photoUrl} alt={log.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                          <img src={log.photo_url || log.photoUrl} alt={log.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
                         </div>
                       )}
                       
@@ -526,7 +498,11 @@ export default function AgitMain() {
                           <h4 className="font-bold text-base text-white mt-1">{log.title}</h4>
                         </div>
                         <button
-                          onClick={() => setFishLogs(fishLogs.filter(x => x.id !== log.id))}
+                          onClick={() => {
+                            const updated = fishLogs.filter(x => x.id !== log.id);
+                            setFishLogs(updated);
+                            syncData('fish', 'delete', { id: log.id }, updated, 'agit_fish_logs');
+                          }}
                           className="text-xs text-slate-500 hover:text-red-400"
                         >
                           삭제
@@ -549,7 +525,6 @@ export default function AgitMain() {
               </div>
             )}
 
-            {/* 3. 비밀 일기장 */}
             {tab === 'diary' && (
               <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
                 <div className="flex justify-between items-center border-b border-slate-800 pb-4">
@@ -602,7 +577,10 @@ export default function AgitMain() {
                         <button
                           onClick={() => {
                             if (!newDiary.title) return;
-                            setDiaries([{ id: Date.now(), date: new Date().toISOString().split('T')[0], ...newDiary }, ...diaries]);
+                            const item = { id: Date.now(), date: new Date().toISOString().split('T')[0], ...newDiary };
+                            const updated = [item, ...diaries];
+                            setDiaries(updated);
+                            syncData('diary', 'add', item, updated, 'agit_diaries');
                             setNewDiary({ title: '', content: '', emoji: '😊', weather: '☀️ 맑음' });
                           }}
                           className={`px-3 py-1.5 rounded-lg ${curTheme.btn} text-xs`}
@@ -623,7 +601,11 @@ export default function AgitMain() {
                         <div key={d.id} className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2">
                           <div className="flex justify-between items-center text-xs text-slate-400">
                             <span>{d.date} • {d.emoji} {d.weather}</span>
-                            <button onClick={() => setDiaries(diaries.filter(x => x.id !== d.id))} className="hover:text-red-400">삭제</button>
+                            <button onClick={() => {
+                              const updated = diaries.filter(x => x.id !== d.id);
+                              setDiaries(updated);
+                              syncData('diary', 'delete', { id: d.id }, updated, 'agit_diaries');
+                            }} className="hover:text-red-400">삭제</button>
                           </div>
                           <h4 className="font-bold text-sm text-white">{d.title}</h4>
                           <p className="text-xs text-slate-300 leading-relaxed whitespace-pre-wrap">{d.content}</p>
@@ -635,7 +617,6 @@ export default function AgitMain() {
               </div>
             )}
 
-            {/* 4. 메모장 */}
             {tab === 'note' && (
               <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
                 <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">📝 스마트 메모장</h2>
@@ -657,7 +638,10 @@ export default function AgitMain() {
                   <button
                     onClick={() => {
                       if (!newNote.title) return;
-                      setNotes([{ id: Date.now(), ...newNote, isPinned: false }, ...notes]);
+                      const item = { id: Date.now(), ...newNote, isPinned: false };
+                      const updated = [item, ...notes];
+                      setNotes(updated);
+                      syncData('note', 'add', item, updated, 'agit_notes');
                       setNewNote({ title: '', content: '', category: '일반' });
                     }}
                     className={`px-4 py-2 rounded-xl ${curTheme.btn} text-xs`}
@@ -679,12 +663,21 @@ export default function AgitMain() {
                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">{n.category}</span>
                         <div className="flex gap-2 text-xs">
                           <button
-                            onClick={() => setNotes(notes.map(x => x.id === n.id ? { ...x, isPinned: !x.isPinned } : x))}
-                            className={n.isPinned ? 'text-amber-400 font-bold' : 'text-slate-500 hover:text-white'}
+                            onClick={() => {
+                              const isPinned = !(n.is_pinned || n.isPinned);
+                              const updated = notes.map(x => x.id === n.id ? { ...x, isPinned, is_pinned: isPinned } : x);
+                              setNotes(updated);
+                              syncData('note', 'toggle_pin', { id: n.id, isPinned }, updated, 'agit_notes');
+                            }}
+                            className={(n.is_pinned || n.isPinned) ? 'text-amber-400 font-bold' : 'text-slate-500 hover:text-white'}
                           >
-                            {n.isPinned ? '📌 고정됨' : '📌 고정'}
+                            {(n.is_pinned || n.isPinned) ? '📌 고정됨' : '📌 고정'}
                           </button>
-                          <button onClick={() => setNotes(notes.filter(x => x.id !== n.id))} className="text-slate-500 hover:text-red-400">삭제</button>
+                          <button onClick={() => {
+                            const updated = notes.filter(x => x.id !== n.id);
+                            setNotes(updated);
+                            syncData('note', 'delete', { id: n.id }, updated, 'agit_notes');
+                          }} className="text-slate-500 hover:text-red-400">삭제</button>
                         </div>
                       </div>
                       <h4 className="font-bold text-sm text-white">{n.title}</h4>
@@ -695,7 +688,6 @@ export default function AgitMain() {
               </div>
             )}
 
-            {/* 5. To-Do */}
             {tab === 'todo' && (
               <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
                 <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">🎯 To-Do & D-Day 관리</h2>
@@ -716,7 +708,10 @@ export default function AgitMain() {
                   <button
                     onClick={() => {
                       if (!newTodo.content) return;
-                      setTodos([{ id: Date.now(), isDone: false, ...newTodo }, ...todos]);
+                      const item = { id: Date.now(), isDone: false, ...newTodo };
+                      const updated = [item, ...todos];
+                      setTodos(updated);
+                      syncData('todo', 'add', item, updated, 'agit_todos');
                       setNewTodo({ content: '', priority: 'normal', dDay: '' });
                     }}
                     className={`px-4 py-2 rounded-xl ${curTheme.btn} text-xs`}
@@ -731,15 +726,24 @@ export default function AgitMain() {
                       <div className="flex items-center gap-3">
                         <input
                           type="checkbox"
-                          checked={t.isDone}
-                          onChange={() => setTodos(todos.map(x => x.id === t.id ? { ...x, isDone: !x.isDone } : x))}
+                          checked={t.is_done || t.isDone}
+                          onChange={() => {
+                            const isDone = !(t.is_done || t.isDone);
+                            const updated = todos.map(x => x.id === t.id ? { ...x, isDone, is_done: isDone } : x);
+                            setTodos(updated);
+                            syncData('todo', 'toggle', { id: t.id, isDone }, updated, 'agit_todos');
+                          }}
                           className="w-4 h-4 rounded bg-slate-800 border-slate-700 accent-amber-500"
                         />
-                        <span className={t.isDone ? 'line-through text-slate-500' : 'text-slate-200'}>{t.content}</span>
+                        <span className={(t.is_done || t.isDone) ? 'line-through text-slate-500' : 'text-slate-200'}>{t.content}</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        {t.dDay && <span className={`font-mono font-bold ${curTheme.accent}`}>{calcDday(t.dDay)}</span>}
-                        <button onClick={() => setTodos(todos.filter(x => x.id !== t.id))} className="text-slate-500 hover:text-red-400">삭제</button>
+                        {(t.d_day_date || t.dDay) && <span className={`font-mono font-bold ${curTheme.accent}`}>{calcDday(t.d_day_date || t.dDay)}</span>}
+                        <button onClick={() => {
+                          const updated = todos.filter(x => x.id !== t.id);
+                          setTodos(updated);
+                          syncData('todo', 'delete', { id: t.id }, updated, 'agit_todos');
+                        }} className="text-slate-500 hover:text-red-400">삭제</button>
                       </div>
                     </div>
                   ))}
@@ -747,7 +751,6 @@ export default function AgitMain() {
               </div>
             )}
 
-            {/* 6. 아카이브 */}
             {tab === 'archive' && (
               <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
                 <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">🚀 개인 북마크 & 아카이브</h2>
@@ -769,7 +772,10 @@ export default function AgitMain() {
                   <button
                     onClick={() => {
                       if (!newBmk.title || !newBmk.url) return;
-                      setBookmarks([{ id: Date.now(), ...newBmk }, ...bookmarks]);
+                      const item = { id: Date.now(), ...newBmk };
+                      const updated = [item, ...bookmarks];
+                      setBookmarks(updated);
+                      syncData('bookmark', 'add', item, updated, 'agit_bookmarks');
                       setNewBmk({ title: '', url: '', icon: '🔗' });
                     }}
                     className={`px-4 py-2 rounded-xl ${curTheme.btn} text-xs`}
@@ -780,25 +786,30 @@ export default function AgitMain() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {bookmarks.map(b => (
-                    <a
+                    <div
                       key={b.id}
-                      href={b.url}
-                      target="_blank"
-                      rel="noreferrer"
                       className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-slate-600 transition flex items-center justify-between group"
                     >
-                      <div className="flex items-center gap-3">
-                        <span className="text-xl">{b.icon}</span>
+                      <a href={b.url} target="_blank" rel="noreferrer" className="flex items-center gap-3">
+                        <span className="text-xl">{b.icon || '🔗'}</span>
                         <span className="font-semibold text-xs text-white group-hover:underline">{b.title}</span>
-                      </div>
-                      <span className="text-slate-500 text-xs">↗</span>
-                    </a>
+                      </a>
+                      <button
+                        onClick={() => {
+                          const updated = bookmarks.filter(x => x.id !== b.id);
+                          setBookmarks(updated);
+                          syncData('bookmark', 'delete', { id: b.id }, updated, 'agit_bookmarks');
+                        }}
+                        className="text-xs text-slate-500 hover:text-red-400 ml-2"
+                      >
+                        삭제
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* 7. 설정 */}
             {tab === 'setting' && (
               <div className={`p-6 rounded-2xl border ${curTheme.card} space-y-6`}>
                 <h2 className="text-lg font-bold text-white border-b border-slate-800 pb-4">⚙️ 6종 특화 테마 및 보안 설정</h2>
@@ -809,7 +820,7 @@ export default function AgitMain() {
                     {Object.entries(THEMES).map(([k, t]) => (
                       <button
                         key={k}
-                        onClick={() => setThemeKey(k)}
+                        onClick={() => handleThemeChange(k)}
                         className={`p-4 rounded-xl border text-xs font-bold transition flex flex-col items-center gap-2 ${themeKey === k ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:text-white'}`}
                       >
                         <span className="text-sm">{t.name}</span>
