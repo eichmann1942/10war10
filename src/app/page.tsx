@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
+// 6가지 프리미엄 특화 테마 (소련 T-80U / 미국 F-35 / 독일 레오파르트 2 반영)
 const THEMES: Record<string, { 
   name: string; 
   bg: string; 
@@ -43,34 +44,34 @@ const THEMES: Record<string, {
     badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
   },
   ru_armory: {
-    name: '🎖️ 러시아의 무기고',
+    name: '🎖️ 소련 - T-80U 무기고',
     bg: 'bg-neutral-950',
-    glow: 'from-red-600/30 via-neutral-950 to-neutral-950',
-    bgImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2000&auto=format&fit=crop',
-    card: 'bg-neutral-900/85 border-red-700/30 shadow-red-950/20 shadow-xl backdrop-blur-xl',
+    glow: 'from-red-600/35 via-neutral-950 to-neutral-950',
+    bgImage: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2000&auto=format&fit=crop',
+    card: 'bg-neutral-900/85 border-red-600/40 shadow-red-950/30 shadow-xl backdrop-blur-xl',
     accent: 'text-red-500',
-    btn: 'bg-red-600 hover:bg-red-500 text-white font-bold shadow-lg shadow-red-600/25',
+    btn: 'bg-red-600 hover:bg-red-500 text-white font-bold shadow-lg shadow-red-600/30',
     badge: 'bg-red-500/10 text-red-400 border-red-500/30'
   },
   us_armory: {
-    name: '🦅 미국의 무기고',
-    bg: 'bg-stone-950',
-    glow: 'from-amber-600/30 via-stone-950 to-stone-950',
-    bgImage: 'https://images.unsplash.com/photo-1508614589041-895b88991e3e?q=80&w=2000&auto=format&fit=crop',
-    card: 'bg-stone-900/85 border-amber-600/30 shadow-stone-950/30 shadow-xl backdrop-blur-xl',
-    accent: 'text-amber-400',
-    btn: 'bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold shadow-lg shadow-amber-600/25',
-    badge: 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+    name: '🦅 미국 - F-35 무기고',
+    bg: 'bg-slate-950',
+    glow: 'from-cyan-500/35 via-slate-950 to-slate-950',
+    bgImage: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=2000&auto=format&fit=crop',
+    card: 'bg-slate-900/85 border-cyan-500/40 shadow-cyan-950/30 shadow-xl backdrop-blur-xl',
+    accent: 'text-cyan-400',
+    btn: 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold shadow-lg shadow-cyan-500/30',
+    badge: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30'
   },
   de_armory: {
-    name: '🛡️ 독일의 무기고',
+    name: '🛡️ 독일 - 레오파르트 2 무기고',
     bg: 'bg-zinc-950',
-    glow: 'from-yellow-500/25 via-zinc-950 to-zinc-950',
-    bgImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2000&auto=format&fit=crop',
-    card: 'bg-zinc-900/85 border-zinc-700/50 shadow-zinc-950/30 shadow-xl backdrop-blur-xl',
-    accent: 'text-yellow-500',
-    btn: 'bg-zinc-200 hover:bg-white text-zinc-950 font-bold shadow-lg shadow-white/20',
-    badge: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30'
+    glow: 'from-amber-500/30 via-zinc-950 to-zinc-950',
+    bgImage: 'https://images.unsplash.com/photo-1579912437766-788398e2ef84?q=80&w=2000&auto=format&fit=crop',
+    card: 'bg-zinc-900/85 border-amber-500/30 shadow-zinc-950/30 shadow-xl backdrop-blur-xl',
+    accent: 'text-amber-400',
+    btn: 'bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold shadow-lg shadow-amber-500/30',
+    badge: 'bg-amber-500/10 text-amber-300 border-amber-500/30'
   }
 };
 
